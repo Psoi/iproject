@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Clipboard with a checklist. Kept inside the central ~66% so Android's adaptive-icon masks don't clip it. -->
 <svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <rect x="140" y="150" width="176" height="28" rx="14" fill="#ffffff" />
-    <rect x="140" y="214" width="132" height="28" rx="14" fill="#ffffff" fill-opacity="0.75" />
-    <rect x="140" y="278" width="88" height="28" rx="14" fill="#ffffff" fill-opacity="0.5" />
+    <!-- Board -->
+    <rect x="144" y="122" width="168" height="222" rx="22" fill="#FFFFFF" />
+    <!-- Clip -->
+    <rect x="184" y="102" width="88" height="42" rx="13" fill="#BFDBFE" />
+    <circle cx="228" cy="116" r="7" fill="#2563EB" />
+
+    <!-- Done -->
+    <rect x="166" y="170" width="30" height="30" rx="8" fill="#2563EB" />
+    <path d="M173 185 l7 7 l12 -13" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="208" y="179" width="82" height="12" rx="6" fill="#93C5FD" />
+
+    <!-- Done -->
+    <rect x="166" y="220" width="30" height="30" rx="8" fill="#2563EB" />
+    <path d="M173 235 l7 7 l12 -13" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="208" y="229" width="64" height="12" rx="6" fill="#93C5FD" />
+
+    <!-- To do -->
+    <rect x="168.5" y="272.5" width="25" height="25" rx="6.5" fill="none" stroke="#2563EB" stroke-width="5" />
+    <rect x="208" y="279" width="74" height="12" rx="6" fill="#CBD5E1" />
 </svg>
