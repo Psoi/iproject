@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="IProject.Views.ProjectPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:IProject.Models"
+    xmlns:views="clr-namespace:IProject.Views"
+    xmlns:vm="clr-namespace:IProject.ViewModels"
+    Title="{Binding Title}"
+    x:DataType="vm:ProjectViewModel"
+    BackgroundColor="{StaticResource Background}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Tabs -->
+        <Grid
+            Padding="8,0"
+            ColumnDefinitions="*,*,*"
+            RowDefinitions="44,3">
+            <Button
+                BackgroundColor="Transparent"
+                Command="{Binding SelectTabCommand}"
+                CommandParameter="{x:Static models:TaskState.ToDo}"
+                Text="{Binding ToDoTabText}"
+                TextColor="{StaticResource TextSecondary}">
+                <Button.Triggers>
+                    <DataTrigger
+                        Binding="{Binding IsToDoTab}"
+                        TargetType="Button"
+                        Value="True">
+                        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button
+                Grid.Column="1"
+                BackgroundColor="Transparent"
+                Command="{Binding SelectTabCommand}"
+                CommandParameter="{x:Static models:TaskState.InProgress}"
+                Text="{Binding InProgressTabText}"
+                TextColor="{StaticResource TextSecondary}">
+                <Button.Triggers>
+                    <DataTrigger
+                        Binding="{Binding IsInProgressTab}"
+                        TargetType="Button"
+                        Value="True">
+                        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button
+                Grid.Column="2"
+                BackgroundColor="Transparent"
+                Command="{Binding SelectTabCommand}"
+                CommandParameter="{x:Static models:TaskState.Done}"
+                Text="{Binding DoneTabText}"
+                TextColor="{StaticResource TextSecondary}">
+                <Button.Triggers>
+                    <DataTrigger
+                        Binding="{Binding IsDoneTab}"
+                        TargetType="Button"
+                        Value="True">
+                        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+                        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <BoxView
+                Grid.Row="1"
+                Margin="12,0"
+                Color="{StaticResource Accent}"
+                IsVisible="{Binding IsToDoTab}" />
+            <BoxView
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="12,0"
+                Color="{StaticResource Accent}"
+                IsVisible="{Binding IsInProgressTab}" />
+            <BoxView
+                Grid.Row="1"
+                Grid.Column="2"
+                Margin="12,0"
+                Color="{StaticResource Accent}"
+                IsVisible="{Binding IsDoneTab}" />
+        </Grid>
+
+        <!-- Tasks -->
+        <CollectionView
+            Grid.Row="1"
+            Margin="0,6,0,0"
+            ItemsSource="{Binding Tasks}"
+            SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label
+                    Padding="32,48"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding EmptyText}"
+                    TextColor="{StaticResource TextSecondary}" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:TaskRow">
+                    <Border
+                        Margin="12,4"
+                        BackgroundColor="{StaticResource Surface}"
+                        StrokeShape="RoundRectangle 8"
+                        StrokeThickness="0">
+                        <Grid ColumnDefinitions="5,52,*">
+                            <!-- Priority edge -->
+                            <BoxView Color="{Binding PriorityColor}" />
+
+                            <!-- Status circle: tap moves to the next status -->
+                            <views:PressableGrid
+                                Grid.Column="1"
+                                Command="{Binding AdvanceCommand, Source={RelativeSource AncestorType={x:Type vm:ProjectViewModel}}, x:DataType=vm:ProjectViewModel}"
+                                CommandParameter="{Binding .}">
+                                <Border
+                                    BackgroundColor="Transparent"
+                                    HeightRequest="24"
+                                    HorizontalOptions="Center"
+                                    Stroke="{Binding StatusColor}"
+                                    StrokeShape="Ellipse"
+                                    StrokeThickness="2"
+                                    VerticalOptions="Center"
+                                    WidthRequest="24">
+                                    <Border.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding IsDone}"
+                                            TargetType="Border"
+                                            Value="True">
+                                            <Setter Property="BackgroundColor" Value="#22C55E" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Grid>
+                                        <Ellipse
+                                            Fill="{Binding StatusColor}"
+                                            HeightRequest="10"
+                                            HorizontalOptions="Center"
+                                            IsVisible="{Binding IsInProgress}"
+                                            VerticalOptions="Center"
+                                            WidthRequest="10" />
+                                        <Label
+                                            FontSize="13"
+                                            HorizontalOptions="Center"
+                                            IsVisible="{Binding IsDone}"
+                                            Text="✓"
+                                            TextColor="White"
+                                            VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                            </views:PressableGrid>
+
+                            <!-- Title and details: tap opens the task -->
+                            <views:PressableGrid
+                                Grid.Column="2"
+                                Padding="0,12,14,12"
+                                Command="{Binding OpenTaskCommand, Source={RelativeSource AncestorType={x:Type vm:ProjectViewModel}}, x:DataType=vm:ProjectViewModel}"
+                                CommandParameter="{Binding .}"
+                                RowDefinitions="Auto,Auto"
+                                RowSpacing="4">
+                                <Label
+                                    FontSize="16"
+                                    LineBreakMode="WordWrap"
+                                    MaxLines="2"
+                                    Text="{Binding Title}"
+                                    TextColor="{StaticResource TextPrimary}">
+                                    <Label.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding IsDone}"
+                                            TargetType="Label"
+                                            Value="True">
+                                            <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+                                            <Setter Property="TextDecorations" Value="Strikethrough" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                                <HorizontalStackLayout Grid.Row="1" Spacing="12">
+                                    <Label
+                                        FontFamily="OpenSansSemibold"
+                                        FontSize="11"
+                                        Text="{Binding TypeText}"
+                                        TextColor="{Binding TypeColor}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        FontSize="12"
+                                        IsVisible="{Binding HasDueDate}"
+                                        Text="{Binding DueText, StringFormat='Due {0}'}"
+                                        TextColor="{Binding DueColor}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        FontSize="12"
+                                        IsVisible="{Binding HasChecklist}"
+                                        Text="{Binding ChecklistText}"
+                                        TextColor="{StaticResource TextSecondary}"
+                                        VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </views:PressableGrid>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="12" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+
+        <!-- Quick add -->
+        <Grid
+            Grid.Row="2"
+            Padding="12,8"
+            BackgroundColor="{StaticResource Surface}"
+            ColumnDefinitions="Auto,*,Auto"
+            ColumnSpacing="8">
+            <Button
+                Padding="12,0"
+                BackgroundColor="{Binding NewTypeColor}"
+                Command="{Binding ToggleNewTypeCommand}"
+                CornerRadius="18"
+                FontFamily="OpenSansSemibold"
+                FontSize="13"
+                HeightRequest="36"
+                MinimumWidthRequest="84"
+                Text="{Binding NewTypeText}"
+                TextColor="#121212"
+                VerticalOptions="Center" />
+            <Entry
+                Grid.Column="1"
+                Placeholder="Add a task…"
+                ReturnCommand="{Binding AddCommand}"
+                ReturnType="Done"
+                Style="{StaticResource FieldEntry}"
+                Text="{Binding NewTitle}"
+                VerticalOptions="Center" />
+            <Button
+                Grid.Column="2"
+                Padding="0"
+                BackgroundColor="{StaticResource Accent}"
+                Command="{Binding AddCommand}"
+                CornerRadius="18"
+                FontSize="22"
+                HeightRequest="36"
+                Text="+"
+                TextColor="White"
+                VerticalOptions="Center"
+                WidthRequest="36" />
+        </Grid>
+    </Grid>
+</ContentPage>

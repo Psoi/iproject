@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="IProject.Views.ProjectsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:services="clr-namespace:IProject.Services"
+    xmlns:views="clr-namespace:IProject.Views"
+    xmlns:vm="clr-namespace:IProject.ViewModels"
+    Title="Projects"
+    x:DataType="vm:ProjectsViewModel"
+    BackgroundColor="{StaticResource Background}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding BackupCommand}" Order="Secondary" Text="Back up…" />
+        <ToolbarItem Command="{Binding RestoreCommand}" Order="Secondary" Text="Restore…" />
+    </ContentPage.ToolbarItems>
+
+    <CollectionView ItemsSource="{Binding Projects}" SelectionMode="None">
+        <CollectionView.EmptyView>
+            <Label
+                Padding="32,48"
+                HorizontalTextAlignment="Center"
+                Text="No projects yet. Create one to start tracking tasks."
+                TextColor="{StaticResource TextSecondary}" />
+        </CollectionView.EmptyView>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="services:ProjectSummary">
+                <Border
+                    Margin="12,5"
+                    BackgroundColor="{StaticResource Surface}"
+                    StrokeShape="RoundRectangle 10"
+                    StrokeThickness="0">
+                    <views:PressableGrid
+                        Padding="16,14"
+                        ColumnDefinitions="*,Auto"
+                        Command="{Binding OpenCommand, Source={RelativeSource AncestorType={x:Type vm:ProjectsViewModel}}, x:DataType=vm:ProjectsViewModel}"
+                        CommandParameter="{Binding .}"
+                        LongPressCommand="{Binding ShowMenuCommand, Source={RelativeSource AncestorType={x:Type vm:ProjectsViewModel}}, x:DataType=vm:ProjectsViewModel}"
+                        RowDefinitions="Auto,Auto,Auto"
+                        RowSpacing="8">
+                        <Label
+                            FontFamily="OpenSansSemibold"
+                            FontSize="17"
+                            LineBreakMode="TailTruncation"
+                            Text="{Binding Name}"
+                            TextColor="{StaticResource TextPrimary}">
+                            <Label.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding IsFinished}"
+                                    TargetType="Label"
+                                    Value="True">
+                                    <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <ProgressBar
+                            Grid.Row="1"
+                            Progress="{Binding Progress}"
+                            ProgressColor="{StaticResource Accent}">
+                            <ProgressBar.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding IsFinished}"
+                                    TargetType="ProgressBar"
+                                    Value="True">
+                                    <Setter Property="ProgressColor" Value="#22C55E" />
+                                </DataTrigger>
+                            </ProgressBar.Triggers>
+                        </ProgressBar>
+                        <Label
+                            Grid.Row="2"
+                            FontSize="13"
+                            Text="{Binding ProgressText}"
+                            TextColor="{StaticResource TextSecondary}" />
+                        <Label
+                            Grid.RowSpan="3"
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            FontSize="22"
+                            Text="›"
+                            TextColor="{StaticResource TextSecondary}"
+                            VerticalOptions="Center" />
+                    </views:PressableGrid>
+                </Border>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+        <CollectionView.Footer>
+            <VerticalStackLayout Padding="16,12,16,32" Spacing="12">
+                <Button
+                    Command="{Binding NewProjectCommand}"
+                    HorizontalOptions="Start"
+                    Style="{StaticResource OutlineButton}"
+                    Text="+ New project" />
+                <Label
+                    FontSize="12"
+                    Text="Long-press a project to rename or delete it."
+                    TextColor="{StaticResource TextSecondary}" />
+            </VerticalStackLayout>
+        </CollectionView.Footer>
+    </CollectionView>
+</ContentPage>
