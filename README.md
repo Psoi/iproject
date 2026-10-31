@@ -1,6 +1,6 @@
 # iProject
 
-A personal Jira replacement for Android. Track your own projects and tasks on your phone with nothing leaving the device: no account, no cloud, no sync.
+A personal project management tool for Android. Track your own projects and tasks on your phone with nothing leaving the device: no account, no cloud, no sync.
 
 Built with .NET MAUI and SQLite.
 
